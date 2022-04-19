@@ -8,7 +8,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-/// As explained by rendering documentation
+//As explained by rendering documentation
 public class Mesh{
     private final int VAO_ID;
     private final int VBO_ID;
