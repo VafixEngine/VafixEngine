@@ -12,6 +12,14 @@ public class Vector3 {
 
 	public Vector3() {}
 
+	public String toString() {
+		return x + ", " + y + ", " + z;
+	}
+
+	public Vector3 clone() {
+		return new Vector3(x, y, z);
+	}
+
 	public double getX() {
 		return x;
 	}

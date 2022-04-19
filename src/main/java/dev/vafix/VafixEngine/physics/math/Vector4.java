@@ -13,6 +13,14 @@ public class Vector4 {
 
 	public Vector4() {}
 
+	public String toString() {
+		return w + ", " + x + ", " + y + ", " + z;
+	}
+
+	public Vector4 clone() {
+		return new Vector4(w, x, y, z);
+	}
+
 	public double getW() {
 		return w;
 	}

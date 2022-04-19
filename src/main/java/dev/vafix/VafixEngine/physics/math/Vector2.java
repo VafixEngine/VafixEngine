@@ -12,6 +12,14 @@ public class Vector2 {
 	public Vector2() {
 	}
 
+	public String toString() {
+		return x + ", " + y;
+	}
+
+	public Vector2 clone() {
+		return new Vector2(x, y);
+	}
+
 	public double getX() {
 		return x;
 	}
