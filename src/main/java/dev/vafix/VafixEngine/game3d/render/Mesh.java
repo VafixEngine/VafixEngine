@@ -1,5 +1,7 @@
 package dev.vafix.VafixEngine.game3d.render;
 
+import dev.vafix.VafixEngine.physics.math.Matrix4f;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -12,8 +14,9 @@ import java.nio.IntBuffer;
 public class Mesh{
     private final int VAO_ID;
     private final int VBO_ID;
+    private final int IBO_ID;
 
-    private IntBuffer indices; // TODO
+    private IntBuffer indices;
 
     private FloatBuffer verticies;
     private int vertexCount;
@@ -22,19 +25,27 @@ public class Mesh{
 
     private FloatBuffer normals; // TODO
 
-    public Mesh(int[] ind, float[] vrt) {
+    public Mesh(int[] ind, Vertex[] vrt) {
         // Allocate the positions into the buffer
-        verticies = MemoryUtil.memAllocFloat(vrt.length);
-        verticies.put(vrt).flip();
+        verticies = MemoryUtil.memAllocFloat(vrt.length * 3);
+        float[] vertData = new float[vrt.length * 3];
+        vertexCount = vrt.length;
 
-        vertexCount = vrt.length / 3;
+        for(int i = 0; i < vrt.length; i++){
+            vertData[i*3] = (float)vrt[i].getPosition().getX();
+            vertData[i*3+1] = (float)vrt[i].getPosition().getY();
+            vertData[i*3+2] = (float)vrt[i].getPosition().getZ();
+        }
+        verticies.put(vertData).flip();
 
-        // Generate VAO and VBO IDs
+        // Allocate indices into a buffer
+        indices = MemoryUtil.memAllocInt(ind.length);
+        indices.put(ind).flip();
+
+        // Generate IDs
         VAO_ID = GL30.glGenVertexArrays();
-        VBO_ID = GL30.glGenBuffers();
-
-        // Automatically bind?
-        bind();
+        VBO_ID = GL15.glGenBuffers();
+        IBO_ID = GL15.glGenBuffers();
     }
 
     public void bind(){
@@ -42,28 +53,27 @@ public class Mesh{
         GL30.glBindVertexArray(VAO_ID);
 
         // Bind buffers
-        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO_ID);
-        GL30.glBufferData(GL15.GL_ARRAY_BUFFER, verticies, GL15.GL_STATIC_DRAW);
-        //MemoryUtil.memFree(verticies); //showed in documentation here, but also used later
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO_ID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticies, GL15.GL_STATIC_DRAW);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER , IBO_ID);
 
         // Store data in attrib list
-        GL20.glVertexAttribPointer(0, 3, GL15.GL_FLOAT, false, 0, 0);
-
-        // Unbind the VBO & VAO
-        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        GL30.glBindVertexArray(0);
-
-        // Free the off-heap memory used by memutil: Java's garbage collector won't do this
-        if(verticies != null){
-            MemoryUtil.memFree(verticies);
-        }
+        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
     }
 
-    public void draw(){ // TODO: Pass in worldTranslation (Matrix4f)?
+    public void unbind() {
+        // Unbind the VBO & VAO
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        GL30.glBindVertexArray(0);
+    }
+
+    public void draw(Matrix4f worldTranslation){
         GL30.glBindVertexArray(VAO_ID);
         GL30.glEnableVertexAttribArray(0);
 
         GL30.glDrawArrays(GL15.GL_TRIANGLES, 0, vertexCount);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
 
         GL30.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
@@ -77,5 +87,19 @@ public class Mesh{
 
         GL30.glBindVertexArray(0);
         GL30.glDeleteVertexArrays(VAO_ID);
+
+        cleanMem();
+    }
+
+    private void cleanMem(){
+        // Verticies buffer clean
+        if(verticies != null){
+            MemoryUtil.memFree(verticies);
+        }
+
+        // Indices buffer clean
+        if(indices != null){
+            MemoryUtil.memFree(indices);
+        }
     }
 }
