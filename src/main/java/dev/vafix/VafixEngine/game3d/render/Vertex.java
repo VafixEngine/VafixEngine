@@ -13,6 +13,10 @@ public class Vertex {
         this.position = new Vector3(x, y, z);
     }
 
+    public Vertex() {
+        position = new Vector3();
+    }
+
     public Vector3 getPosition(){
         return position;
     }
