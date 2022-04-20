@@ -1,14 +1,14 @@
 package dev.vafix.VafixEngine.physics.math;
 
-public class Matrix4f {
+public class Matrix4d {
 
 	private double[][] matrix = new double[4][4];
 
-	public Matrix4f(double[][] matrix) {
+	public Matrix4d(double[][] matrix) {
 		this.matrix = matrix;
 	}
 
-	public Matrix4f(double a, double b, double c, double d,
+	public Matrix4d(double a, double b, double c, double d,
 					double e, double f, double g, double h,
 					double i, double j, double k, double l,
 					double m, double n, double o, double p) {
@@ -18,36 +18,47 @@ public class Matrix4f {
 		matrix[3][0] = m; matrix[3][1] = n; matrix[3][2] = o; matrix[3][3] = p;
 	}
 
-	public Matrix4f() {
+	public Matrix4d() {
 		matrix[0][0] = 1;
 		matrix[1][1] = 1;
 		matrix[2][2] = 1;
 		matrix[3][3] = 1;
 	}
 
-	public Matrix4f clone() {
-		return new Matrix4f(matrix);
+	public Matrix4d clone() {
+		return new Matrix4d(matrix);
 	}
 
-	public Matrix4f add(Matrix4f m) {
+	public Matrix4d add(Matrix4d m) {
 		for (int i = 0; i < 16; i++) {
 			matrix[(int) i / 4][i % 4] += m.getMatrix()[(int) i / 4][i % 4];
 		}
 		return this;
 	}
 
-	public Matrix4f subtract(Matrix4f m) {
+	public Matrix4d subtract(Matrix4d m) {
 		return add(m.multiply(-1));
 	}
 
-	public Matrix4f multiply(double d) {
+	public Matrix4d multiply(double d) {
 		for (int i = 0; i < 16; i++) {
 			matrix[(int) i / 4][i % 4] *= d;
 		}
 		return this;
 	}
 
-	public Matrix4f inverse() {
+	public Matrix4d multiply(Matrix4d m) {
+		double[][] result = new double[4][4];
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				result[i][j] = matrix[i][0] * m.matrix[0][j] + matrix[i][1] * m.matrix[1][j] + matrix[i][2] * m.matrix[2][j] + matrix[i][3] * m.matrix[3][j];
+			}
+		}
+		matrix = result;
+		return this;
+	}
+
+	public Matrix4d inverse() {
 		double[] inv = new double[16];
 		double[] m = flatten();
 		double det;
@@ -82,8 +93,19 @@ public class Matrix4f {
 			inv[i] *= det;
 		}
 
-		matrix = new Matrix4f(inv).getMatrix();
+		matrix = new Matrix4d(inv).getMatrix();
 		return this;
+	}
+
+	public String toString() {
+		String r = "";
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				r += matrix[i][j] + ", ";
+			}
+			r += "\b\b\n";
+		}
+		return r;
 	}
 
 	public double[][] getMatrix() {
@@ -136,7 +158,7 @@ public class Matrix4f {
 		return flat;
 	}
 
-	public Matrix4f(double[] flat) {
+	public Matrix4d(double[] flat) {
 		for (int i = 0; i < 16; i++) {
 			matrix[(int) i / 4][i % 4] = flat[i];
 		}

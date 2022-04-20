@@ -1,6 +1,6 @@
 package dev.vafix.VafixEngine.game3d.render;
 
-import dev.vafix.VafixEngine.physics.math.Matrix4f;
+import dev.vafix.VafixEngine.physics.math.Matrix4d;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -68,7 +68,7 @@ public class Mesh{
         GL30.glBindVertexArray(0);
     }
 
-    public void draw(Matrix4f worldTranslation){
+    public void draw(Matrix4d worldTranslation){
         GL30.glBindVertexArray(VAO_ID);
         GL30.glEnableVertexAttribArray(0);
 
