@@ -21,26 +21,34 @@ public class Mesh{
     private FloatBuffer verticies;
     private int vertexCount;
 
-    private FloatBuffer uvs; // TODO
+    private FloatBuffer uvs;
 
-    private FloatBuffer normals; // TODO
+    private FloatBuffer normals;
 
-    public Mesh(int[] ind, Vertex[] vrt) {
+    public Mesh(int[] _ind, Vertex[] _vrt, float[] _uv, float[] _norm) {
         // Allocate the positions into the buffer
-        verticies = MemoryUtil.memAllocFloat(vrt.length * 3);
-        float[] vertData = new float[vrt.length * 3];
-        vertexCount = vrt.length;
+        verticies = MemoryUtil.memAllocFloat(_vrt.length * 3);
+        float[] vertData = new float[_vrt.length * 3];
+        vertexCount = _vrt.length;
 
-        for(int i = 0; i < vrt.length; i++){
-            vertData[i*3] = (float)vrt[i].getPosition().getX();
-            vertData[i*3+1] = (float)vrt[i].getPosition().getY();
-            vertData[i*3+2] = (float)vrt[i].getPosition().getZ();
+        for(int i = 0; i < _vrt.length; i++){
+            vertData[i*3] = (float)_vrt[i].getPosition().getX();
+            vertData[i*3+1] = (float)_vrt[i].getPosition().getY();
+            vertData[i*3+2] = (float)_vrt[i].getPosition().getZ();
         }
         verticies.put(vertData).flip();
 
         // Allocate indices into a buffer
-        indices = MemoryUtil.memAllocInt(ind.length);
-        indices.put(ind).flip();
+        indices = MemoryUtil.memAllocInt(_ind.length);
+        indices.put(_ind).flip();
+
+        // Allocate uvs into the buffer
+        uvs = MemoryUtil.memAllocFloat(_uv.length);
+        uvs.put(_uv).flip();
+
+        // Allocate normals into buffer
+        normals = MemoryUtil.memAllocFloat(_norm.length);
+        normals.put(_norm).flip();
 
         // Generate IDs
         VAO_ID = GL30.glGenVertexArrays();
@@ -71,12 +79,18 @@ public class Mesh{
     public void draw(Matrix4d worldTranslation){
         GL30.glBindVertexArray(VAO_ID);
         GL30.glEnableVertexAttribArray(0);
+        GL30.glEnableVertexAttribArray(1);
+        GL30.glEnableVertexAttribArray(2);
 
         GL30.glDrawArrays(GL15.GL_TRIANGLES, 0, vertexCount);
+        GL30.glDrawElements(GL15.GL_TRIANGLES, vertexCount, GL15.GL_UNSIGNED_INT, 0);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
 
         GL30.glDisableVertexAttribArray(0);
+        GL30.glDisableVertexAttribArray(1);
+        GL30.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
+        GL20.glBindTexture(GL15.GL_TEXTURE_2D, 0);
     }
 
     public void cleanUp(){
@@ -100,6 +114,14 @@ public class Mesh{
         // Indices buffer clean
         if(indices != null){
             MemoryUtil.memFree(indices);
+        }
+
+        if(uvs != null){
+            MemoryUtil.memFree(uvs);
+        }
+
+        if(normals != null){
+            MemoryUtil.memFree(normals);
         }
     }
 }
