@@ -31,7 +31,7 @@ public class Matrix4d {
 
 	public Matrix4d add(Matrix4d m) {
 		for (int i = 0; i < 16; i++) {
-			matrix[(int) i / 4][i % 4] += m.getMatrix()[(int) i / 4][i % 4];
+			matrix[i / 4][i % 4] += m.getMatrix()[i / 4][i % 4];
 		}
 		return this;
 	}
@@ -42,7 +42,7 @@ public class Matrix4d {
 
 	public Matrix4d multiply(double d) {
 		for (int i = 0; i < 16; i++) {
-			matrix[(int) i / 4][i % 4] *= d;
+			matrix[i / 4][i % 4] *= d;
 		}
 		return this;
 	}
@@ -120,14 +120,14 @@ public class Matrix4d {
 		if (id > 15 || id < 0 ) {
 			throw new IndexOutOfBoundsException(id + " is greater than or smaller than the limits of the matrix (0-15)");
 		}
-		return matrix[(int) id / 4][id % 4];
+		return matrix[id / 4][id % 4];
 	}
 
 	public void setValue(int id, double value) {
 		if (id > 15 || id < 0 ) {
 			throw new IndexOutOfBoundsException(id + " is greater than or smaller than the limits of the matrix (0-15)");
 		}
-		matrix[(int) id / 4][id % 4] = value;
+		matrix[id / 4][id % 4] = value;
 	}
 
 	public double getValue(int x, int y) {
@@ -153,14 +153,14 @@ public class Matrix4d {
 	public double[] flatten() {
 		double[] flat = new double[16];
 		for (int i = 0; i < 16; i++) {
-			flat[i] = matrix[(int) i / 4][i % 4];
+			flat[i] = matrix[i / 4][i % 4];
 		}
 		return flat;
 	}
 
 	public Matrix4d(double[] flat) {
 		for (int i = 0; i < 16; i++) {
-			matrix[(int) i / 4][i % 4] = flat[i];
+			matrix[i / 4][i % 4] = flat[i];
 		}
 	}
 

@@ -73,6 +73,8 @@ dependencies {
     implementation "org.lwjgl:lwjgl-xxhash"
     implementation "org.lwjgl:lwjgl-yoga"
     implementation "org.lwjgl:lwjgl-zstd"
+
+    
     implementation "org.lwjgl:lwjgl::$lwjglNatives"
     implementation "org.lwjgl:lwjgl-assimp::$lwjglNatives"
     implementation "org.lwjgl:lwjgl-bgfx::$lwjglNatives"
@@ -150,7 +152,7 @@ task fatJar(type: Jar) {
     manifest {
     }
     archiveBaseName = "${rootProject.name}"
-    exclude 'META-INF', 'META-INF/**'
+    exclude 'META-INF', 'META-INF/**', '*.jar'
     from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
