@@ -1,6 +1,10 @@
 package dev.vafix.VafixEngine.game3d.render;
 
+import dev.vafix.VafixEngine.physics.math.Matrix4d;
+import dev.vafix.VafixEngine.physics.math.Vector4;
+
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +25,43 @@ public class Shader {
 
         uniforms = new HashMap<>();
         // TODO: Load vertex and fragment shader files
+    }
+
+    public void createUniform(String uniformName) throws Exception{
+        int uniformLocation = GL20.glGetUniformLocation(PROGRAM_ID, uniformName);
+
+        if(uniformLocation < 0){
+            throw new Exception("Could not locate uniform");
+        }
+
+        uniforms.put(uniformName, uniformLocation);
+    }
+
+    public void setUniform(String uniformName, Matrix4d value){
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            GL20.glUniformMatrix4fv(uniforms.get(uniformName), false, stack.mallocFloat(16));
+        }
+    }
+
+    public void setUniform(String uniformName, int value){
+        GL20.glUniform1i(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, float value){
+        GL20.glUniform1f(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, Vector4 value){
+        GL20.glUniform4f(uniforms.get(uniformName), (float)value.getX(), (float)value.getY(), (float)value.getZ(), (float)value.getW());
+    }
+
+    public void setUniform(String uniformName, boolean value){
+        float res = 0;
+        if(value){
+            res = 1;
+        }
+
+        GL20.glUniform1f(uniforms.get(uniformName), res);
     }
 
     public void createVertexShader(String code) throws Exception{
