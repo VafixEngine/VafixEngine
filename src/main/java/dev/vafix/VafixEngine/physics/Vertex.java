@@ -1,4 +1,4 @@
-package dev.vafix.VafixEngine.game3d.render;
+package dev.vafix.VafixEngine.physics;
 
 import dev.vafix.VafixEngine.physics.math.Vector3;
 

@@ -1,5 +1,6 @@
 package dev.vafix.VafixEngine.game3d.render;
 
+import dev.vafix.VafixEngine.physics.Vertex;
 import dev.vafix.VafixEngine.physics.math.Matrix4d;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
