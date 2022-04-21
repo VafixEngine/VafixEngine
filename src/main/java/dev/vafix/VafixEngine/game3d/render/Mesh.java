@@ -19,16 +19,23 @@ public class Mesh{
 
     private IntBuffer indices;
 
-    private FloatBuffer verticies;
+    private FloatBuffer vertices;
     private int vertexCount;
 
     private FloatBuffer uvs;
 
     private FloatBuffer normals;
 
+    /**
+     * Creates a mesh taking in indices, vertices, uvs, and normals
+     * @param _ind indices
+     * @param _vrt vertices
+     * @param _uv uvs
+     * @param _norm normals
+     */
     public Mesh(int[] _ind, Vertex[] _vrt, float[] _uv, float[] _norm) {
         // Allocate the positions into the buffer
-        verticies = MemoryUtil.memAllocFloat(_vrt.length * 3);
+        vertices = MemoryUtil.memAllocFloat(_vrt.length * 3);
         float[] vertData = new float[_vrt.length * 3];
         vertexCount = _vrt.length;
 
@@ -37,7 +44,7 @@ public class Mesh{
             vertData[i*3+1] = (float)_vrt[i].getPosition().getY();
             vertData[i*3+2] = (float)_vrt[i].getPosition().getZ();
         }
-        verticies.put(vertData).flip();
+        vertices.put(vertData).flip();
 
         // Allocate indices into a buffer
         indices = MemoryUtil.memAllocInt(_ind.length);
@@ -57,19 +64,25 @@ public class Mesh{
         IBO_ID = GL15.glGenBuffers();
     }
 
+    /**
+     * Bind this mesh to GL
+     */
     public void bind(){
         // Bind verts
         GL30.glBindVertexArray(VAO_ID);
 
         // Bind buffers
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO_ID);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticies, GL15.GL_STATIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertices, GL15.GL_STATIC_DRAW);
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER , IBO_ID);
 
         // Store data in attrib list
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
     }
 
+    /**
+     * Unbind this mesh from GL
+     */
     public void unbind() {
         // Unbind the VBO & VAO
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -77,6 +90,10 @@ public class Mesh{
         GL30.glBindVertexArray(0);
     }
 
+    /**
+     * Draws the mesh according to the view
+     * @param worldTranslation Translation of the view on a specific object
+     */
     public void draw(Matrix4d worldTranslation){
         GL30.glBindVertexArray(VAO_ID);
         GL30.glEnableVertexAttribArray(0);
@@ -94,6 +111,10 @@ public class Mesh{
         GL20.glBindTexture(GL15.GL_TEXTURE_2D, 0);
     }
 
+    /**
+     * General cleanup for GL library
+     * Deletes binded buffers, elements, arrays, etc.
+     */
     public void cleanUp(){
         GL20.glDisableVertexAttribArray(0);
 
@@ -106,10 +127,14 @@ public class Mesh{
         cleanMem();
     }
 
+    /**
+     * Cleans the buffers.
+     * Javas garbage collector will not do this on its own
+     */
     private void cleanMem(){
         // Verticies buffer clean
-        if(verticies != null){
-            MemoryUtil.memFree(verticies);
+        if(vertices != null){
+            MemoryUtil.memFree(vertices);
         }
 
         // Indices buffer clean
