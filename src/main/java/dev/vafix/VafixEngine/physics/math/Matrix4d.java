@@ -97,6 +97,10 @@ public class Matrix4d {
 		return this;
 	}
 
+	public static Matrix4d perspectiveMatrix() {
+		return null;
+	}
+
 	public String toString() {
 		String r = "";
 		for (int i = 0; i < 4; i++) {
