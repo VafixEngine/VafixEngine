@@ -1,6 +1,5 @@
 package dev.vafix.VafixEngine.game;
 
-import dev.vafix.VafixEngine.physics.math.Matrix4d;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
