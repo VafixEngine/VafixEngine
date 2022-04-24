@@ -37,7 +37,7 @@ public abstract class Display {
     /**
      * Initialize function for the display
      */
-    public void run(){
+    protected void run(){
         //region GLFW Window Setup
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -104,7 +104,7 @@ public abstract class Display {
     /**
      * Loop for the display
      */
-    public void loop(){
+    protected void loop(){
         GLFW.glfwSwapBuffers(window);
         GLFW.glfwPollEvents();
     }
@@ -152,8 +152,16 @@ public abstract class Display {
         });
     }
 
+    public boolean displayShouldClose(){
+        return GLFW.glfwWindowShouldClose(window);
+    }
+
     public boolean isKeyPressed(int keycode){
         return GLFW.glfwGetKey(window, keycode) == GLFW.GLFW_PRESS;
+    }
+
+    public void setFPS(int fps){
+        this.fps = fps;
     }
 
     public abstract void update();
