@@ -84,7 +84,7 @@ public class Matrix4d {
 		det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
 
 		if (det == 0) {
-			throw new ArithmeticException("Matrix inversion determinant was 0!");
+			throw new ArithmeticException("Matrix determinant was 0!");
 		}
 
 		det = 1.0 / det;
